@@ -10,6 +10,7 @@ import (
 
 const (
 	// FIXME these would come from outside
+	DestinationFilter = ""
 	TimebinDuration   = time.Duration(time.Hour * 24)
 	DuplicateLookback = time.Duration(time.Second * 30)
 )
@@ -26,6 +27,10 @@ var (
 )
 
 func timebinPacket(timestamp time.Time, packet aprs.Packet) {
+	if DestinationFilter != "" && packet.Dst.String() != DestinationFilter {
+		return
+	}
+
 	binTime := timestamp.Truncate(TimebinDuration)
 	if _, ok := bins[binTime]; !ok {
 		bins[binTime] = &Timebin{
